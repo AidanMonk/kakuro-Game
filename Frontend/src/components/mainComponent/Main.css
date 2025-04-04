@@ -1,11 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bona+Nova+SC:ital,wght@0,400;0,700;1,400&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     background-color: rgb(127, 78, 47);
 }
@@ -13,96 +7,89 @@ body {
 main {
     display: flex;
     flex-direction: column;
+}
 
-    >.header {
-        display: flex;
-        width: 750px;
-        height: 150px;
-        justify-content: center;
-        align-items: center;
-        animation: headerBg 4s infinite forwards;
-        background-color: rgba(255, 222, 173, 0.792);
-        margin: 10px auto;
-        box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 750px;
+    height: 150px;
+    margin: 10px auto;
+    background-color: rgba(255, 222, 173, 0.792);
+    box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
+    animation: headerBg 4s infinite forwards;
+}
 
+.header h1 {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 50px;
+    font-weight: 400;
+    color: black;
+    text-align: center;
+    width: 700px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50px;
+}
 
-        >h1 {
-            /* border: 1px solid black; */
-            font-family: 'Luckiest Guy', cursive;
-            font-size: 50px;
-            text-align: center;
-            color: black;
-            font-weight: 400;
-            border-radius: 50px;
-            width: 700px;
-            height: 100px;
-            justify-content: center;
-            align-items: center;
-            display: flex;
+.gameplay {
+    display: flex;
+    flex-direction: row;
+}
 
-        }
-    }
+.gameplay img {
+    width: 500px;
+    height: 600px;
+    object-fit: cover;
+    align-items: flex-start;
+}
 
-    .gameplay {
-        >img {
-            width: 500px;
-            height: 600px;
-            object-fit: cover;
-        }
+.instructions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+    height: 500px;
+    margin-left: 20px;
+    padding: 20px;
+    background-color: rgba(255, 222, 173, 0.792);
+    border-radius: 10px;
+    font-size: 20px;
+    line-height: 35px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
+}
 
-        display: flex;
-        flex-direction: row;
+.instructions h2 {
+    font-family: 'Luckiest Guy', cursive;
+    font-weight: 100;
+}
 
-        >.instructions {
-            display: flex;
-            width: 350px;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(255, 222, 173, 0.792);
-            padding: 20px;
-            border-radius: 10px;
-            flex-direction: column;
-            margin-left: 20px;
-            font-size: 20px;
-            line-height: 35px;
-            height: 500px;
-            overflow: hidden;
-            box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
+.instructions p {
+    font-family: "Bona Nova SC", serif;
+    font-size: 22px;
+    overflow-y: auto;
+    height: 100%;
+    max-height: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: rgb(128, 71, 24) rgb(247, 205, 180);
+}
 
-            >h2 {
-                font-family: 'Luckiest Guy', cursive;
-                font-weight: 100;
-            }
-
-            >p {
-                overflow-y: auto;
-                height: 100%;
-                max-height: 100%;
-                scrollbar-width: thin;
-                scrollbar-color: rgb(128, 71, 24) rgb(247, 205, 180);
-                font-size: 22px;
-                font-family: "Bona Nova SC", serif;
-
-            }
-        }
-
-        >.box {
-            display: flex;
-            width: 800px;
-            height: 550px;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(255, 222, 173, 0.833);
-            padding: 20px;
-            margin-left: 70px;
-            border-radius: 10px;
-            box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
-        }
-    }
-
-
-
-
+.box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 800px;
+    height: 550px;
+    margin-left: 30px;
+    background-color: rgba(255, 222, 173, 0.833);
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.64) 0px 3px 8px;
+    margin: 20px;
 }
 
 @keyframes headerBg {
@@ -116,6 +103,5 @@ main {
 
     100% {
         border-radius: 68% 32% 70% 30% / 30% 62% 38% 70%;
-
     }
 }

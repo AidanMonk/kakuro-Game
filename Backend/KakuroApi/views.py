@@ -6,20 +6,22 @@ from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from . utils.KakuroBoard import KakuroBoard
+from . utils.KakuroGame import KakuroGame
+from . utils.BoardSerializer import BoardSerializer
 
 User = get_user_model()
 
 #create/reset the board, just use a premade 4x4 for now
 @api_view(['GET'])
 def init_board(request):
-    board = KakuroBoard()  # Create a new board instance
+    board = KakuroBoard() 
     board.generate_board()
-    return JsonResponse({"board": board.serialize()})
+    return JsonResponse({"board": BoardSerializer.serialize(board.board)})
 
 @api_view(['POST'])
 def validate_board(request):
-    kakuro_board = KakuroBoard.deserialize(request.data.get('board'))
-    is_valid = KakuroBoard.validate_answers(kakuro_board.board)
+    kakuro_board = BoardSerializer.deserialize(request.data.get('board'))
+    is_valid = KakuroGame.validate_answers(kakuro_board.board)
 
     return JsonResponse({
         "is_valid": is_valid  # Send the validity status back

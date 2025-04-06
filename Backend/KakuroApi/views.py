@@ -5,16 +5,32 @@ import json
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
-from . utils.KakuroBoard import KakuroBoard
+from .utils.KakuroBoard import KakuroBoard
 
 User = get_user_model()
 
-#create/reset the board, just use a premade 4x4 for now
-@api_view(['GET'])
+
+# create/reset the board, just use a premade 4x4 for now
+@api_view(['GET', 'POST'])
 def init_board(request):
     board = KakuroBoard()  # Create a new board instance
-    board.generate_board()
-    return JsonResponse({"board": board.serialize()})
+
+    # Get difficulty level from request
+    if request.method == 'POST':
+        difficulty = request.data.get('difficulty', 'medium')
+    else:
+        # Default to medium difficulty for GET requests
+        difficulty = request.GET.get('difficulty', 'medium')
+
+    # Generate board with specified difficulty
+    board.generate_board(difficulty)
+
+    # Return board data and difficulty level
+    return JsonResponse({
+        "board": board.serialize(),
+        "difficulty": difficulty
+    })
+
 
 @api_view(['POST'])
 def validate_board(request):
@@ -24,6 +40,7 @@ def validate_board(request):
     return JsonResponse({
         "is_valid": is_valid  # Send the validity status back
     })
+
 
 # User Registration
 @csrf_exempt
@@ -49,6 +66,7 @@ def register_user(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
 # User Login
 @csrf_exempt
 def login_user(request):
@@ -62,10 +80,8 @@ def login_user(request):
 
         if user is not None:
             login(request, user)
-            return JsonResponse
+            return JsonResponse({"message": "Login successful"}, status=200)
         else:
             return JsonResponse({"error": "Invalid email or password"}, status=400)
 
     return JsonResponse({"error": "Invalid request"}, status=400)
-
-

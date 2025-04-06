@@ -6,11 +6,9 @@
     box-sizing: border-box;
 }
 
-body {
+.signup {
     background-color: rgb(127, 78, 47);
 }
-
-
 
 .header {
     display: flex;
@@ -37,7 +35,6 @@ body {
         justify-content: center;
         align-items: center;
         display: flex;
-
     }
 }
 

@@ -8,7 +8,6 @@ import CustomButton from './ButtonTest';
 
 const Main = () => {
     return (
-        <>
         <main>
             <div className='header'>
                 <h1>Welcome to Kakuro Game</h1>
@@ -22,14 +21,15 @@ const Main = () => {
                     </p>
                 </div>
 
-                <div className="box">
+                <div className="gamebox">
                     <Board/>
                 </div>
-                
-                <img src={assets.bg1} alt="" />
+
+                <div className="right-column">
+                </div>
+
             </div>
         </main>
-        </>
     )
 }
 

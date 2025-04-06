@@ -92,6 +92,7 @@ const SignUp = () => {  // ✅ Fix: The component starts here
 
     return (
         <>
+        <div className="signup">
             <div className="header">
                 <h1>Get Started !</h1>
             </div>
@@ -165,6 +166,7 @@ const SignUp = () => {  // ✅ Fix: The component starts here
                     </div>
                 </div>
             </div>
+        </div>
         </>
     );
 };

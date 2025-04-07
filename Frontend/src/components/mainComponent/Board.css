@@ -1,97 +1,255 @@
 .board {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border-radius: 12px; /* Soft rounded edges */
-    border-collapse: separate; /* Allows rounded corners */
-  }
-  
-  table {
-    width: 100%;
-    height: 100%;
-    border-spacing: 5px; /* Adds spacing between cells */
-    border-radius: 12px; /* Rounded corners for the table */
-    padding: 10px;
-    background-color: #916E4C;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  }
-  
-  td {
-    width: 10%;
-    height: 10%;
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-    border: 3px solid #4a4a4a;
-    border-radius: 8px; /* Rounded edges on cells */
-    transition: all 0.3s ease-in-out; /* Smooth transitions */
-  }
-  
-  td:hover {
-    transform: scale(1.03); /* Slight zoom effect on hover */
-  }
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.difficulty-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #eba612;
+  color: black;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.table-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  padding: 15px;
+}
+
+table {
+  border-spacing: 8px;
+  border-collapse: separate;
+  background-color: #916E4C;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  width: auto;
+  height: auto;
+  padding: 8px;
+}
+
+/* Larger square cells */
+td {
+  width: 80px;
+  height: 80px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  border: 3px solid #4a4a4a;
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+tr {
+  height: 80px;
+}
+
+td:hover {
+  transform: scale(1.02);
+}
+
+.board-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+  width: 100%;
+}
 
 button {
-  margin-top: 20px; /* Adds space above the button */
-  padding: 10px 20px; /* Makes the button larger and more clickable */
-  font-size: 16px; /* Increases text size for better readability */
-  background-color: #eba612; /* Button background color (blue) */
-  color: black; /* Button text color */
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #eba612;
+  color: black;
   font-weight: bold;
-  border: none; /* Removes the default border */
-  border-radius: 8px; /* Adds rounded corners to the button */
-  cursor: pointer; /* Changes the cursor to a pointer when hovering */
-  transition: background-color 0.3s ease; /* Smooth color transition on hover */
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  background-color: #ff8800; /* Darker blue on hover */
+  background-color: #ff8800;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-  
-  .cell.block {
-    border: none;
-    background-color: transparent;
-    color: white;
-    border-radius: 8px; /* Rounded edges */
+
+.hint-btn {
+  background-color: #9aa84d;
+}
+
+.hint-btn:hover {
+  background-color: #b5c259;
+}
+
+.hint-btn.disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.hint-btn.disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.hint-limit {
+  color: #d47a4a;
+  font-weight: bold;
+  margin-top: 8px;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.cell.block {
+  border: none;
+  background-color: transparent;
+  color: white;
+  border-radius: 8px;
+}
+
+.cell.sum {
+  background-color: #9aa84d;
+  color: white;
+  border-radius: 8px;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 1rem;
+}
+
+.cell.number {
+  background-color: #E5D5AC;
+}
+
+.text {
+  font-family: "Comic Sans MS", fantasy;
+  font-size: 1.2rem;
+  color: #2c2c2c;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.input-number-box {
+  width: 100%;
+  height: 100%;
+  font-size: 22px;
+  font-weight: bold;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: green;
+  caret-color: black;
+  box-sizing: border-box;
+  text-align: center;
+  appearance: none;
+  -moz-appearance: textfield;
+}
+
+.input-number-box::-webkit-outer-spin-button,
+.input-number-box::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.loading-text {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #5a3921;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  td {
+    width: 70px;
+    height: 70px;
   }
-  
+
+  tr {
+    height: 70px;
+  }
+}
+
+@media (max-width: 900px) {
+  td {
+    width: 60px;
+    height: 60px;
+    font-size: 16px;
+  }
+
+  tr {
+    height: 60px;
+  }
+
   .cell.sum {
-    background-color: #9aa84d; /* Softer greenish tone */
-    color: white;
-    border-radius: 8px; /* Rounded edges */
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-  }
-
-  .cell.number{
-    background-color: #E5D5AC;
-  }
-
-  .text {
-    font-family: "Comic Sans MS", fantasy; /* Fun, game-like font */
-    font-size: 22px;
-    color: #2c2c2c;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.9rem;
   }
 
   .input-number-box {
-    width: 90%;
-    height: 90%;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 5px;
-    border: none;
-    outline: none;
-    background: transparent;
-    color: green;
-    caret-color: black;
-    box-sizing: border-box;
-    text-align: center;
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  td {
+    width: 55px;
+    height: 55px;
+    font-size: 15px;
+    border-width: 2px;
   }
 
+  tr {
+    height: 55px;
+  }
 
-  
+  .cell.sum {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  td {
+    width: 45px;
+    height: 45px;
+    font-size: 14px;
+    border-width: 2px;
+  }
+
+  tr {
+    height: 45px;
+  }
+
+  .cell.sum {
+    font-size: 0.75rem;
+  }
+
+  .board-buttons {
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  button {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+}

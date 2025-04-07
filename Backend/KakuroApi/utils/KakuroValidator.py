@@ -2,7 +2,7 @@ from .NumberCell import NumberCell
 from .SumCell import SumCell
 from .BlockCell import BlockCell
 
-class KakuroGame():
+class KakuroValidator():
     @staticmethod
     def validate_answers(board):
         #check rows

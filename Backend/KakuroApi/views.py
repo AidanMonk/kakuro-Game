@@ -23,7 +23,7 @@ def init_board(request):
         difficulty = request.GET.get('difficulty', 'medium')
 
     # Generate board with specified difficulty
-    board.generate_board(difficulty)
+    board.select_board(difficulty)
 
     # Return board data and difficulty level
     return JsonResponse({

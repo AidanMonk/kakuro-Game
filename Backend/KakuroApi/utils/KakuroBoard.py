@@ -2,62 +2,27 @@ from .NumberCell import NumberCell
 from .SumCell import SumCell
 from .BlockCell import BlockCell
 from .CellType import CellType
+from .BoardGenerator import BoardGenerator
+from .KakuroValidator import KakuroValidator
 import random
 
 class KakuroBoard:
     def __init__(self):
         self.board = []
 
-    def generate_board(self, difficulty="medium"):
-        """
-        Generate a Kakuro board based on difficulty level
-        Difficulty levels: "easy", "medium", "hard"
-        """
+    def select_board(self, difficulty="medium"):
+
         if difficulty == "easy":
-            self._generate_easy_board()
+            self.board = BoardGenerator.generate_easy_board()
         elif difficulty == "medium":
-            self._generate_medium_board()
+            self.board = BoardGenerator.generate_medium_board()
         elif difficulty == "hard":
-            self._generate_hard_board()
+            self.board = BoardGenerator.generate_hard_board()
         else:
             # Default to medium if invalid difficulty is provided
-            self._generate_medium_board()
+            self.board = BoardGenerator.generate_medium_board()
 
         print(self)
-
-    def _generate_easy_board(self):
-        """Generate a simple 4x4 board for beginners"""
-        self.board = [
-            [BlockCell(), BlockCell(), SumCell(16, None), SumCell(10, None)],
-            [BlockCell(), SumCell(16, 13), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 12), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 8), NumberCell(0), NumberCell(0), BlockCell()]
-        ]
-
-        # Solution: [[0, 0, 0, 0], [0, 0, 7, 6], [0, 5, 3, 4], [0, 3, 5, 0]]
-
-    def _generate_medium_board(self):
-        """Generate a 5x5 board with moderate complexity"""
-        self.board = [
-            [BlockCell(), BlockCell(), BlockCell(), SumCell(16, None), SumCell(24, None)],
-            [BlockCell(), SumCell(23, None), SumCell(16, 16), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 16), NumberCell(0), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 17), NumberCell(0), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 14), NumberCell(0), NumberCell(0), BlockCell(), BlockCell()]
-        ]
-
-        # Solution: [7, 9], [3, 5, 2, 6], [9, 4, 1, 3], [5, 9]
-
-    def _generate_hard_board(self):
-        """Generate a 6x6 board with higher complexity"""
-        self.board = [
-            [BlockCell(), BlockCell(), BlockCell(), SumCell(7, None), SumCell(16, None), SumCell(16, None)],
-            [BlockCell(), SumCell(23, None), SumCell(11, 11), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [BlockCell(), SumCell(16, 15), NumberCell(0), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 14), NumberCell(0), NumberCell(0), NumberCell(0), NumberCell(0), NumberCell(0)],
-            [SumCell(None, 17), NumberCell(0), NumberCell(0), NumberCell(0), SumCell(11, 6), NumberCell(0)],
-            [SumCell(None, 11), NumberCell(0), NumberCell(0), BlockCell(), SumCell(None, 6), NumberCell(0)]
-        ]
 
     def set_board(self, board):
         self.board = board
@@ -81,7 +46,10 @@ class KakuroBoard:
             for cell in row:
                 if isinstance(cell, NumberCell) and cell.value == 0:
                     return False
+                
+        return KakuroValidator.validate_answers(board)
 
+        '''
         # Determine which board we're dealing with based on dimensions and structure
         if len(board) == 4:  # Easy board
             return KakuroBoard._validate_easy_board(board)
@@ -89,6 +57,7 @@ class KakuroBoard:
             return KakuroBoard._validate_medium_board(board)
         elif len(board) == 6:  # Hard board
             return KakuroBoard._validate_hard_board(board)
+        '''
 
         return False  # Unknown board layout
 

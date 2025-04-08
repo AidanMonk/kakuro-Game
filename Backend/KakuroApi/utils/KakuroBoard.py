@@ -10,11 +10,11 @@ class KakuroBoard:
     def __init__(self):
         self.board = []
 
-    def set_board(self, board):
-        self.board = board
-
     def get_board(self):
         return self.board
+
+    def set_board(self, board):
+        self.board = board
 
     def set_number(self, row, column, value):
         if isinstance(self.board[row][column], NumberCell):

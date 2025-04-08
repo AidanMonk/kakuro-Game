@@ -6,11 +6,12 @@ from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from .utils.KakuroBoard import KakuroBoard
+from .utils.BoardGenerator import BoardGenerator
+from .utils.BoardSerializer import BoardSerializer
+from .utils.KakuroValidator import KakuroValidator
 
 User = get_user_model()
 
-
-# create/reset the board, just use a premade 4x4 for now
 @api_view(['GET', 'POST'])
 def init_board(request):
     board = KakuroBoard()  # Create a new board instance
@@ -23,24 +24,22 @@ def init_board(request):
         difficulty = request.GET.get('difficulty', 'medium')
 
     # Generate board with specified difficulty
-    board.select_board(difficulty)
+    board.set_board(BoardGenerator.generate_board(difficulty))
 
     # Return board data and difficulty level
     return JsonResponse({
-        "board": board.serialize(),
+        "board": BoardSerializer.serialize(board.get_board()),
         "difficulty": difficulty
     })
 
-
 @api_view(['POST'])
 def validate_board(request):
-    kakuro_board = KakuroBoard.deserialize(request.data.get('board'))
-    is_valid = KakuroBoard.validate_answers(kakuro_board.board)
+    kakuro_board = BoardSerializer.deserialize(request.data.get('board'))
+    is_valid = KakuroValidator.validate(kakuro_board.get_board())
 
     return JsonResponse({
         "is_valid": is_valid  # Send the validity status back
     })
-
 
 # User Registration
 @csrf_exempt

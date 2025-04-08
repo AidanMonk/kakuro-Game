@@ -4,6 +4,7 @@ from .BlockCell import BlockCell
 from .KakuroBoard import KakuroBoard
 
 class BoardSerializer:
+    #JSON Adapter Class
     @staticmethod
     def serialize(board):
         result = []

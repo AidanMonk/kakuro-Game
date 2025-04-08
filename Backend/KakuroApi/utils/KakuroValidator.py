@@ -3,8 +3,10 @@ from .SumCell import SumCell
 from .BlockCell import BlockCell
 
 class KakuroValidator():
+    #validates a KakuroBoard
+
     @staticmethod
-    def validate_answers(board):
+    def validate(board):
         #check rows
         is_valid = True
         #check horizontally

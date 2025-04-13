@@ -2,15 +2,22 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from django.http import JsonResponse
 import json
+import random
 from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from .utils.KakuroBoard import KakuroBoard
 from .utils.BoardGenerator import BoardGenerator
+from .utils.RandomBoardGenerator import RandomBoardGenerator
 from .utils.BoardSerializer import BoardSerializer
 from .utils.KakuroValidator import KakuroValidator
+from .utils.NumberCell import NumberCell
 
 User = get_user_model()
+
+# Dictionary to store active boards and their solutions
+active_boards = {}
+
 
 @api_view(['GET', 'POST'])
 def init_board(request):
@@ -23,14 +30,30 @@ def init_board(request):
         # Default to medium difficulty for GET requests
         difficulty = request.GET.get('difficulty', 'medium')
 
-    # Generate board with specified difficulty
-    board.set_board(BoardGenerator.generate_board(difficulty))
+    # Add a random seed to ensure we get different boards each time
+    random.seed()  # Reset the random seed
 
-    # Return board data and difficulty level
+    # Generate a random board with its solution
+    generated_board, solution = RandomBoardGenerator.generate_board_with_solution(difficulty)
+    board.set_board(generated_board)
+
+    # Generate a unique ID for this board
+    board_id = str(random.randint(10000, 99999))
+
+    # Store the board and solution
+    active_boards[board_id] = {
+        "board": generated_board,
+        "solution": solution,
+        "difficulty": difficulty
+    }
+
+    # Return board data, difficulty level, and the board_id
     return JsonResponse({
         "board": BoardSerializer.serialize(board.get_board()),
-        "difficulty": difficulty
+        "difficulty": difficulty,
+        "board_id": board_id
     })
+
 
 @api_view(['POST'])
 def validate_board(request):
@@ -40,6 +63,42 @@ def validate_board(request):
     return JsonResponse({
         "is_valid": is_valid  # Send the validity status back
     })
+
+
+@api_view(['POST'])
+def get_hint(request):
+    # Get the data from the request
+    board_id = request.data.get('board_id')
+    row = request.data.get('row')
+    col = request.data.get('col')
+
+    # Check if the board ID exists
+    if board_id not in active_boards:
+        return JsonResponse({"error": "Invalid board ID"}, status=400)
+
+    # Get the board and solution
+    board_data = active_boards[board_id]
+    board = board_data["board"]
+    solution = board_data["solution"]
+
+    # Check if the coordinates are valid and point to a NumberCell
+    if (row < 0 or row >= len(board) or
+            col < 0 or col >= len(board[0]) or
+            not isinstance(board[row][col], NumberCell)):
+        return JsonResponse({"error": "Invalid cell coordinates"}, status=400)
+
+    # Get the correct value from the solution
+    hint_value = solution[row][col]
+
+    # Debug info
+    print(f"Providing hint for board {board_id}: cell ({row},{col}) = {hint_value}")
+
+    return JsonResponse({
+        "hint_value": hint_value,
+        "row": row,
+        "col": col
+    })
+
 
 # User Registration
 @csrf_exempt

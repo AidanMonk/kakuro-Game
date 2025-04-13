@@ -6,11 +6,13 @@ import { useSoundManager } from './SoundManager';
 const Board = ({ difficulty, onNewGame }) => {
   // state variables
   const [board, setBoard] = useState(null);
+  const [boardId, setBoardId] = useState(null);
   const [editingCell, setEditingCell] = useState(null);
   const [currentDifficulty, setCurrentDifficulty] = useState(difficulty || "medium");
   const [hintsUsed, setHintsUsed] = useState(0);
   const [popup, setPopup] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Get sound manager
   const soundManager = useSoundManager();
@@ -46,6 +48,7 @@ const Board = ({ difficulty, onNewGame }) => {
     }
 
     const initializeBoard = async () => {
+      setLoading(true);
       try {
         console.log("Initializing board with difficulty:", currentDifficulty);
 
@@ -62,8 +65,13 @@ const Board = ({ difficulty, onNewGame }) => {
         }
 
         const data = await response.json();
+        console.log("Received board data:", data);
         setBoard(data.board);
-        console.log("Board loaded with difficulty:", data.difficulty);
+        setBoardId(data.board_id);  // Save the board ID
+        console.log("Board loaded with difficulty:", data.difficulty, "Board ID:", data.board_id);
+
+        // Reset hints used for new board
+        setHintsUsed(0);
 
         // Play sound when board is loaded
         if (soundManager) {
@@ -71,6 +79,8 @@ const Board = ({ difficulty, onNewGame }) => {
         }
       } catch (error) {
         console.error("Error initializing board:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -155,7 +165,7 @@ const Board = ({ difficulty, onNewGame }) => {
     }
   };
 
-  const getHint = () => {
+  const getHint = async () => {
     // Play hint sound
     if (soundManager) {
       soundManager.play('hint');
@@ -196,62 +206,56 @@ const Board = ({ difficulty, onNewGame }) => {
     const randomIndex = Math.floor(Math.random() * emptyCells.length);
     const randomCell = emptyCells[randomIndex];
 
-    // For this cell, we need to determine the correct value based on our validation logic
-    // Since the board validation is done on the backend, we'll use a simplified approach:
-    // For demonstration, we'll use a value between 1-9 that would likely be correct
-    // In a production app, you'd want to make an API call to get the actual correct value
+    try {
+      console.log("Requesting hint for board:", boardId, "cell:", randomCell);
 
-    // Create a new board with the hint
-    const updatedBoard = board.map((r, rIdx) => {
-      return r.map((cell, cIdx) => {
-        if (rIdx === randomCell.row && cIdx === randomCell.col) {
-          // Let's try to get a hint from each board type's solution
-          let hintValue = 5; // Default value
-
-          // Use our known solutions from KakuroBoard.py
-          if (currentDifficulty === "easy") {
-            // For easy board
-            if (rIdx === 1 && cIdx === 2) hintValue = 7;
-            else if (rIdx === 1 && cIdx === 3) hintValue = 6;
-            else if (rIdx === 2 && cIdx === 1) hintValue = 5;
-            else if (rIdx === 2 && cIdx === 2) hintValue = 3;
-            else if (rIdx === 2 && cIdx === 3) hintValue = 4;
-            else if (rIdx === 3 && cIdx === 1) hintValue = 3;
-            else if (rIdx === 3 && cIdx === 2) hintValue = 5;
-          } else if (currentDifficulty === "medium") {
-            // For medium board
-            if (rIdx === 1 && cIdx === 3) hintValue = 7;
-            else if (rIdx === 1 && cIdx === 4) hintValue = 9;
-            else if (rIdx === 2 && cIdx === 1) hintValue = 3;
-            else if (rIdx === 2 && cIdx === 2) hintValue = 5;
-            else if (rIdx === 2 && cIdx === 3) hintValue = 2;
-            else if (rIdx === 2 && cIdx === 4) hintValue = 6;
-            else if (rIdx === 3 && cIdx === 1) hintValue = 9;
-            else if (rIdx === 3 && cIdx === 2) hintValue = 4;
-            else if (rIdx === 3 && cIdx === 3) hintValue = 1;
-            else if (rIdx === 3 && cIdx === 4) hintValue = 3;
-            else if (rIdx === 4 && cIdx === 1) hintValue = 5;
-            else if (rIdx === 4 && cIdx === 2) hintValue = 9;
-          } else {
-            // For hard board - since we don't have a defined solution, use a random value 1-9
-            hintValue = Math.floor(Math.random() * 9) + 1;
-          }
-
-          return { ...cell, value: hintValue };
-        }
-        return cell;
+      // Request a hint from the server
+      const response = await fetch("http://127.0.0.1:8000/hint/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          board_id: boardId,
+          row: randomCell.row,
+          col: randomCell.col
+        }),
       });
-    });
 
-    setBoard(updatedBoard);
-    setHintsUsed(hintsUsed + 1);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
 
-    // Show hint popup
-    setPopup({
-      type: 'hint',
-      message: `Hint: Value ${updatedBoard[randomCell.row][randomCell.col].value} added to row ${randomCell.row + 1}, column ${randomCell.col + 1}`,
-      onClose: () => setPopup(null)
-    });
+      const data = await response.json();
+      console.log("Received hint data:", data);
+
+      // Create a new board with the hint
+      const updatedBoard = board.map((r, rIdx) => {
+        return r.map((cell, cIdx) => {
+          if (rIdx === data.row && cIdx === data.col) {
+            return { ...cell, value: data.hint_value };
+          }
+          return cell;
+        });
+      });
+
+      setBoard(updatedBoard);
+      setHintsUsed(hintsUsed + 1);
+
+      // Show hint popup
+      setPopup({
+        type: 'hint',
+        message: `Hint: Value ${data.hint_value} added to row ${data.row + 1}, column ${data.col + 1}`,
+        onClose: () => setPopup(null)
+      });
+    } catch (error) {
+      console.error("Error getting hint:", error);
+      setPopup({
+        type: 'error',
+        message: "Error getting hint. Please try again.",
+        onClose: () => setPopup(null)
+      });
+    }
   };
 
   // Toggle instructions popup
@@ -273,7 +277,7 @@ const Board = ({ difficulty, onNewGame }) => {
   };
 
   // Show loading message until board data is available
-  if (!board) return <p className="loading-text">Loading {currentDifficulty} board...</p>;
+  if (loading || !board) return <p className="loading-text">Loading {currentDifficulty} board...</p>;
 
   return (
     <div className="board">

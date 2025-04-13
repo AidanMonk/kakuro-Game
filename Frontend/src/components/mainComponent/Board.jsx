@@ -13,6 +13,7 @@ const Board = ({ difficulty, onNewGame }) => {
   const [popup, setPopup] = useState(null);
   const [showInstructions, setShowInstructions] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   // Get sound manager
   const soundManager = useSoundManager();
@@ -43,49 +44,56 @@ const Board = ({ difficulty, onNewGame }) => {
 
   // Effect to load the board when component mounts or difficulty changes
   useEffect(() => {
+    // Only change difficulty when the prop changes
     if (difficulty !== currentDifficulty) {
       setCurrentDifficulty(difficulty);
     }
 
-    const initializeBoard = async () => {
-      setLoading(true);
-      try {
-        console.log("Initializing board with difficulty:", currentDifficulty);
+    // Only initialize the board on first load or when difficulty changes
+    if (isInitialLoad || difficulty !== currentDifficulty) {
+      const initializeBoard = async () => {
+        setLoading(true);
+        try {
+          console.log("Initializing board with difficulty:", currentDifficulty);
 
-        const response = await fetch("http://127.0.0.1:8000/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ difficulty: currentDifficulty }),
-        });
+          const response = await fetch("http://127.0.0.1:8000/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ difficulty: currentDifficulty }),
+          });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Received board data:", data);
+          setBoard(data.board);
+          setBoardId(data.board_id);  // Save the board ID
+          console.log("Board loaded with difficulty:", data.difficulty, "Board ID:", data.board_id);
+
+          // Reset hints used for new board
+          setHintsUsed(0);
+
+          // Mark that initial load is complete
+          setIsInitialLoad(false);
+
+          // Play sound when board is loaded
+          if (soundManager) {
+            soundManager.play('click');
+          }
+        } catch (error) {
+          console.error("Error initializing board:", error);
+        } finally {
+          setLoading(false);
         }
+      };
 
-        const data = await response.json();
-        console.log("Received board data:", data);
-        setBoard(data.board);
-        setBoardId(data.board_id);  // Save the board ID
-        console.log("Board loaded with difficulty:", data.difficulty, "Board ID:", data.board_id);
-
-        // Reset hints used for new board
-        setHintsUsed(0);
-
-        // Play sound when board is loaded
-        if (soundManager) {
-          soundManager.play('click');
-        }
-      } catch (error) {
-        console.error("Error initializing board:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeBoard();
-  }, [currentDifficulty, difficulty, soundManager]);
+      initializeBoard();
+    }
+  }, [currentDifficulty, difficulty, isInitialLoad, soundManager]);
 
   const validateBoard = async () => {
     // Play click sound
@@ -276,6 +284,16 @@ const Board = ({ difficulty, onNewGame }) => {
     }
   };
 
+  // Force a new board (for the "New Game" button)
+  const handleNewGame = () => {
+    // Set isInitialLoad to true to force a board reload
+    setIsInitialLoad(true);
+    // Then call the parent's onNewGame function
+    if (onNewGame) {
+      onNewGame();
+    }
+  };
+
   // Show loading message until board data is available
   if (loading || !board) return <p className="loading-text">Loading {currentDifficulty} board...</p>;
 
@@ -343,10 +361,7 @@ const Board = ({ difficulty, onNewGame }) => {
         ) : (
           <button disabled className="btn hint-btn disabled">No Hints Left</button>
         )}
-        <button onClick={() => {
-          if (soundManager) soundManager.play('click');
-          onNewGame();
-        }} className="new-game-btn">New Game</button>
+        <button onClick={handleNewGame} className="new-game-btn">New Game</button>
         <button onClick={toggleInstructions} className="how-to-play-btn">How to Play</button>
       </div>
 

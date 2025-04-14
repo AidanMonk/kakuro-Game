@@ -7,7 +7,6 @@ from django.contrib.auth import get_user_model, authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.views.decorators.csrf import csrf_exempt
 from .utils.KakuroBoard import KakuroBoard
-from .utils.BoardGenerator import BoardGenerator
 from .utils.RandomBoardGenerator import RandomBoardGenerator
 from .utils.BoardSerializer import BoardSerializer
 from .utils.KakuroValidator import KakuroValidator
@@ -34,7 +33,7 @@ def init_board(request):
     random.seed()  # Reset the random seed
 
     # Generate a random board with its solution
-    generated_board, solution = RandomBoardGenerator.generate_board_with_solution(difficulty)
+    generated_board, solution = RandomBoardGenerator.generate_board(difficulty)
     board.set_board(generated_board)
 
     # Generate a unique ID for this board

@@ -11,24 +11,8 @@ class RandomBoardGenerator:
     Generates random Kakuro boards that are guaranteed to be solvable.
     Boards are generated with varying complexity based on the selected difficulty.
     """
-
     @staticmethod
     def generate_board(difficulty):
-        """
-        Generate a random board with the specified difficulty.
-
-        Args:
-            difficulty (str): 'easy', 'medium', or 'hard'
-
-        Returns:
-            2D list: A randomly generated Kakuro board
-        """
-        # Generate the board and solution
-        board, _ = RandomBoardGenerator.generate_board_with_solution(difficulty)
-        return board
-
-    @staticmethod
-    def generate_board_with_solution(difficulty):
         """
         Generate a random board with the specified difficulty and return both
         the board and its solution.

@@ -2,7 +2,6 @@ from .NumberCell import NumberCell
 from .SumCell import SumCell
 from .BlockCell import BlockCell
 from .CellType import CellType
-from .BoardGenerator import BoardGenerator
 from .KakuroValidator import KakuroValidator
 import random
 

@@ -14,19 +14,31 @@ const MainContent = () => {
         theme: 'default',
         soundEffects: true,
         musicVolume: 50,
-        difficulty: 'medium',
-        animations: true,
     });
 
     // Get sound manager
     const soundManager = useSoundManager();
 
-    // Use the default difficulty from settings when starting a new game
+    // Set a default difficulty if none is selected
     useEffect(() => {
-        if (!difficulty && appSettings.difficulty) {
-            setDifficulty(appSettings.difficulty);
+        if (!difficulty) {
+            setDifficulty('medium'); // Default to medium difficulty
         }
-    }, [appSettings.difficulty, difficulty]);
+    }, [difficulty]);
+
+    // Prevent body scrolling when instructions modal is open
+    useEffect(() => {
+        if (showInstructions) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cleanup function to restore scrolling when component unmounts
+        return () => {
+            document.body.style.overflow = 'auto';
+        };
+    }, [showInstructions]);
 
     const handleDifficultySelect = (selectedDifficulty) => {
         if (soundManager) {
@@ -34,6 +46,9 @@ const MainContent = () => {
         }
         setDifficulty(selectedDifficulty);
         setGameStarted(true);
+
+        // Scroll to top when starting a new game
+        window.scrollTo(0, 0);
     };
 
     const handleNewGame = () => {
@@ -42,6 +57,9 @@ const MainContent = () => {
         }
         setGameStarted(false);
         setDifficulty(null);
+
+        // Scroll to top when starting a new game
+        window.scrollTo(0, 0);
     };
 
     const toggleInstructions = () => {
@@ -53,11 +71,6 @@ const MainContent = () => {
 
     const handleApplySettings = (newSettings) => {
         setAppSettings(newSettings);
-
-        // Apply animations setting if needed
-        if (newSettings.animations !== appSettings.animations) {
-            document.body.classList.toggle('no-animations', !newSettings.animations);
-        }
     };
 
     // Start background music when component mounts
@@ -90,7 +103,6 @@ const MainContent = () => {
                         <>
                             <DifficultySelection
                                 onSelectDifficulty={handleDifficultySelect}
-                                defaultDifficulty={appSettings.difficulty}
                             />
                             <div className="board-buttons difficulty-page-buttons">
                                 <button onClick={toggleInstructions} className="how-to-play-btn">How to Play</button>
@@ -106,8 +118,13 @@ const MainContent = () => {
             <Settings onApplySettings={handleApplySettings} />
 
             {/* Instructions popup */}
-            {showInstructions && !gameStarted && (
-                <div className="instructions-popup">
+            {showInstructions && (
+                <div className="instructions-popup" onClick={(e) => {
+                    // Close popup when clicking outside content
+                    if (e.target.className === "instructions-popup") {
+                        toggleInstructions();
+                    }
+                }}>
                     <div className="instructions-content">
                         <h2>HOW TO PLAY?</h2>
                         <p>

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './SignUp.css';
 import { useNavigate } from 'react-router-dom';
 
-const SignUp = () => {  // ✅ Fix: The component starts here
+const SignUp = () => {
     const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('signup'); // For mobile view toggle between signup/login
 
     // Sign up logic
     const handleSignUp = async () => {
@@ -87,20 +88,39 @@ const SignUp = () => {  // ✅ Fix: The component starts here
 
     // Guest logic
     const handleGuest = () => {
-        navigate('/game');  // ✅ Guest user directly goes to the game page
+        navigate('/game');  // Guest user directly goes to the game page
+    };
+
+    // Toggle between signup and login tabs on mobile
+    const toggleTab = (tab) => {
+        setActiveTab(tab);
     };
 
     return (
-        <>
         <div className="signup">
             <div className="header">
-                <h1>Get Started !</h1>
+                <h1>Get Started!</h1>
+            </div>
+
+            {/* Mobile Tab Switcher */}
+            <div className="mobile-tabs">
+                <button
+                    className={`tab-btn ${activeTab === 'signup' ? 'active' : ''}`}
+                    onClick={() => toggleTab('signup')}
+                >
+                    Sign Up
+                </button>
+                <button
+                    className={`tab-btn ${activeTab === 'login' ? 'active' : ''}`}
+                    onClick={() => toggleTab('login')}
+                >
+                    Login
+                </button>
             </div>
 
             <div className="container">
-                {/* Left box: Sign Up */}
-                <div className="box">
-
+                {/* Sign Up Box - Only visible on desktop or when signup tab is active */}
+                <div className={`box ${activeTab === 'signup' ? 'active-tab' : 'hidden-mobile'}`}>
                     <div className="form">
                         <label className="label">Username</label>
                         <input
@@ -139,10 +159,8 @@ const SignUp = () => {  // ✅ Fix: The component starts here
                     </button>
                 </div>
 
-                {/* Right box: Log In */}
-
-                <div className="box">
-
+                {/* Login Box - Only visible on desktop or when login tab is active */}
+                <div className={`box ${activeTab === 'login' ? 'active-tab' : 'hidden-mobile'}`}>
                     <div className="form">
                         <label className="label">Email</label>
                         <input
@@ -166,8 +184,17 @@ const SignUp = () => {  // ✅ Fix: The component starts here
                     </div>
                 </div>
             </div>
+
+            {/* Only show this on mobile */}
+            <div className="mobile-guest-section">
+                <span className="guest">
+                    Don't want to create an account?
+                </span>
+                <button onClick={handleGuest} className="guestbtn">
+                    Continue as Guest
+                </button>
+            </div>
         </div>
-        </>
     );
 };
 

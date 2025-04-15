@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSoundManager } from './SoundManager';
-import './Settings.css'; // Import the CSS file we created
+import './Settings.css';
 
 const Settings = ({ onApplySettings }) => {
   const [showPanel, setShowPanel] = useState(false);
   const [settings, setSettings] = useState({
     theme: 'default',
     soundEffects: true,
-    musicVolume: 50,
-    difficulty: 'medium',
-    animations: true,
+    musicVolume: 50
   });
 
   // Get sound manager from context
@@ -107,8 +105,10 @@ const Settings = ({ onApplySettings }) => {
       {/* Settings Panel */}
       {showPanel && (
         <div className="settings-panel">
-          <h3>Settings</h3>
-          <button className="close-settings" onClick={togglePanel}>×</button>
+          <div className="settings-header">
+            <h3>Settings</h3>
+            <button className="close-settings" onClick={togglePanel}>×</button>
+          </div>
 
           {/* Theme Setting */}
           <div className="settings-option">
@@ -162,34 +162,6 @@ const Settings = ({ onApplySettings }) => {
               value={settings.musicVolume}
               onChange={(e) => handleSettingChange('musicVolume', parseInt(e.target.value))}
             />
-          </div>
-
-          {/* Default Difficulty */}
-          <div className="settings-option">
-            <label>Default Difficulty</label>
-            <select
-              value={settings.difficulty}
-              onChange={(e) => handleSettingChange('difficulty', e.target.value)}
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-
-          {/* Animations Toggle */}
-          <div className="settings-option">
-            <div className="toggle-container">
-              <label>Animations</label>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={settings.animations}
-                  onChange={(e) => handleSettingChange('animations', e.target.checked)}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
           </div>
         </div>
       )}

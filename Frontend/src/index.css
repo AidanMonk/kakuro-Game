@@ -3,3 +3,17 @@
 :root {
   @import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
 }
+
+/* Global scrolling fixes */
+html, body, #root {
+  height: auto;
+  min-height: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  position: relative;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}

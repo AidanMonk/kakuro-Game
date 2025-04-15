@@ -11,6 +11,7 @@
   z-index: 1000;
   animation: fadeIn 0.3s ease-out;
   padding: 1rem;
+  overflow-y: auto; /* Enable scrolling if needed */
 }
 
 @keyframes fadeIn {
@@ -30,6 +31,9 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   transform: scale(0.9);
   animation: scaleIn 0.3s ease-out forwards;
+  margin: auto; /* Center vertically if content is shorter than viewport */
+  overflow-y: auto; /* Allow scrolling within the popup if content is too large */
+  max-height: 90vh; /* Prevent popup from being taller than viewport */
 }
 
 @keyframes scaleIn {
@@ -49,6 +53,7 @@
   margin-bottom: clamp(1rem, 5vh, 1.25rem);
   color: #5a3921;
   line-height: 1.5;
+  width: 100%;
 }
 
 .popup-buttons {
@@ -56,6 +61,7 @@
   gap: clamp(0.625rem, 3vw, 0.9375rem);
   flex-wrap: wrap;
   justify-content: center;
+  width: 100%;
 }
 
 .popup-action-btn, .popup-close-btn {
@@ -67,6 +73,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   margin: 0.25rem;
+  min-width: 80px;
 }
 
 .popup-action-btn {
@@ -115,6 +122,7 @@
 
   .popup-action-btn, .popup-close-btn {
     width: 100%;
+    margin: 0.25rem 0;
   }
 }
 
@@ -133,5 +141,9 @@
   .popup-message {
     font-size: 0.75rem;
     margin-bottom: 0.75rem;
+  }
+
+  .popup-overlay {
+    padding: 0.5rem;
   }
 }
